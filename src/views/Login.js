@@ -8,8 +8,8 @@ import Jumbotron from 'react-bootstrap/Jumbotron';
 const {login} = require('../services/Auth');
 
 class Login extends React.Component {
-    constructor(){
-        super();
+    constructor(props){
+        super(props);
         this.state = {
             user: "",
             password: ""
@@ -28,9 +28,8 @@ class Login extends React.Component {
     }
 
     async submitHandler(){
-        //console.log(this.state.email,this.state.password);
-        await login(this.state);
-        //window.location.href = '/';
+        let r = await login(this.state);
+        if(r) this.props.login_func();
     }
 
     render() {

@@ -35,7 +35,8 @@ class Register extends React.Component {
 
     submitHandler(){
         //console.log(this.state.email,this.state.password);
-        register(this.state);
+        let r = register(this.state);
+        if(r) this.props.login_func();
     }
 
     render() {

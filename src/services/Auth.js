@@ -7,42 +7,45 @@ async function login(data) {
         userName: data.user,
         password: data.password
     };
-    fetch(`${URL}/api/auth/userLogin`, {
+    let res = await fetch(`${URL}/api/auth/userLogin`, {
         method: 'POST',
         body: JSON.stringify(body),
         headers: {
             'Content-Type': 'application/json',
         },
-    }).then(res => {
-        //console.log(res.headers.get("x-auth-token"))
+    })
+    if(res.status == 200){
         var token = res.headers.get("x-auth-token");
-        //cookie.save('x-access-token',)
         localStorage.setItem('x-access-token',token);
-    });
+        return 1;
+    }
+    else return 0
 }
 
-function register(data){
+async function register(data){
 
     var body = {
         userName: data.user,
         email: data.email,
         password: data.password
     };
-    fetch(`${URL}/api/auth/userCreate`, {
+    let res = fetch(`${URL}/api/auth/userCreate`, {
         method: 'POST',
         body: JSON.stringify(body),
         headers: {
             'Content-Type': 'application/json'
         }
-    }).then(res=>{
-        var token = res.headers.get("x-access-token");
-        localStorage.setItem('x-access-token', token);
     })
-
+    if(res.status == 200){
+        var token = res.headers.get("x-auth-token");
+        localStorage.setItem('x-access-token', token);
+        return 1;
+    } else return 0;
 }
 
 async function auth(){
     let token = localStorage.getItem('x-access-token');
+    //console.log(token);
     if(!token) return 0;
     let res = await fetch(`${URL}/api/auth/current`, {
         method: 'GET',

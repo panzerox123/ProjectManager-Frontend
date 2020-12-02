@@ -1,5 +1,5 @@
 import './App.css';
-import React from "react";
+import React, { useCallback } from "react";
 import { BrowserRouter as Router, Route } from 'react-router-dom';
 import 'bootstrap/dist/css/bootstrap.min.css';
 
@@ -8,8 +8,30 @@ import Register from './views/Register'
 import Navbar from 'react-bootstrap/Navbar';
 import Nav from 'react-bootstrap/Nav';
 
-const { auth } = require('./services/Auth')
+import Home from './views/Home'
+import Team from './views/Team'
 
+import Jumbotron from 'react-bootstrap/Jumbotron';
+import Container from 'react-bootstrap/Container';
+import InputGroup from 'react-bootstrap/InputGroup';
+import FormControl from 'react-bootstrap/FormControl';
+import Button from 'react-bootstrap/Button'
+
+const { auth, login } = require('./services/Auth')
+const {createTeam, joinTeam_1} = require('./services/Teams')
+var new_team_ref;
+var join_team_ref;
+
+async function createNewTeam(){
+  //console.log(new_team_ref.value);
+  let r = await createTeam(new_team_ref.value)
+  window.location.href = '/';
+}
+async function joinTeam(){
+  console.log(join_team_ref.value);
+  let r = await joinTeam_1(join_team_ref.value)
+  window.location.href = '/';
+}
 
 class App extends React.Component {
   constructor() {
@@ -18,13 +40,17 @@ class App extends React.Component {
       logged_in: 0,
       data: {}
     }
+    this.log_out = this.log_out.bind(this);
+    this.log_in = this.log_in.bind(this);
+
+    new_team_ref = null;
+    join_team_ref = null;
 
   }
   async componentDidMount() {
     const auth_check = await auth();
     //console.log(auth_check);
     if (auth_check) this.setState({ logged_in: 1, data: auth_check });
-    this.log_out = this.log_out.bind(this);
   }
 
   async log_in() {
@@ -32,9 +58,41 @@ class App extends React.Component {
     if (auth_check) this.setState({ logged_in: 1, data: auth_check });
   }
 
-  log_out() {
+  async log_out() {
     localStorage.removeItem('x-access-token');
-    this.setState({ logged_in: 0 });
+    const auth_check = await auth();
+    if (!auth_check) this.setState({ logged_in: 0, data: {} });
+    window.location.href = "/";
+  }
+
+  newTeam_render() {
+    return (
+      <Container>
+        <h2>Create a new team</h2>
+        <InputGroup className="mb-3">
+          <FormControl
+            placeholder="Team Name"
+            ref = {(el) => {new_team_ref = el}}
+          />
+        </InputGroup>
+        <Button onClick={createNewTeam}>Done</Button>
+      </Container>
+    );
+  }
+
+  joinTeam_render() {
+    return (
+      <Container>
+        <h2>Join a team</h2>
+        <InputGroup className="mb-3">
+          <FormControl
+            placeholder="Team Number"
+            ref = {(el) => {join_team_ref = el}}
+          />
+        </InputGroup>
+        <Button onClick={joinTeam}>Done</Button>
+      </Container>
+    );
   }
 
   authentication() {
@@ -48,8 +106,8 @@ class App extends React.Component {
             <Nav.Link href="/register">Signup</Nav.Link>
           </Navbar.Collapse>
         </Navbar>
-        <Route path="/" exact component={Login} />
-        <Route path="/register" exact component={Register} />
+        <Route path="/" exact render={(props) => <Login login_func={this.log_in} {...props} />} />
+        <Route path="/register" exact render={(props) => <Register login_func={this.log_in} {...props} />} />
       </Router>
     );
   }
@@ -66,6 +124,11 @@ class App extends React.Component {
             <Nav.Link onClick={this.log_out}>{this.state.data.email}</Nav.Link>
           </Navbar.Collapse>
         </Navbar>
+        <Route path='/' exact component={Home} />
+        <Route path='/new_team' exact render={this.newTeam_render} />
+        <Route path='/join_team' exact render={this.joinTeam_render} />
+        <Route path='/team/:teamNumber' exact component = {Team}/>
+
       </Router>
     )
   }
