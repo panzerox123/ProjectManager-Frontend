@@ -21,7 +21,7 @@ class Home extends React.Component {
             <Card className="text-center" key={data.teamNumber}>
                 <Card.Body>
                 <Card.Title><b>{data.teamName}</b></Card.Title>
-                <Button variant="success">Open</Button>
+                <Button variant="success" href={`/team/${data.teamNumber}`}>Open</Button>
                 </Card.Body>
                 <Card.Footer><b>Invite Code</b><br></br>{data.teamNumber}</Card.Footer>
             </Card>
