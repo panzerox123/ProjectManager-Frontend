@@ -1,6 +1,6 @@
 import React from 'react'
-import { Button, Card, FormControl, InputGroup } from 'react-bootstrap'
-import { getTaskDetails, createSubTask, renameTask } from '../services/Task'
+import { ButtonGroup, Button, Card, FormControl, InputGroup } from 'react-bootstrap'
+import { getTaskDetails, createSubTask, renameTask, updateStatus, deleteTask_sub } from '../services/Task'
 
 class SubTask extends React.Component {
     constructor(props) {
@@ -8,6 +8,7 @@ class SubTask extends React.Component {
         this.state = {
             taskName: "",
             parent_task: "",
+            status: 0,
             children: [],
             show_add: false,
             display_sub: false,
@@ -21,55 +22,116 @@ class SubTask extends React.Component {
         this.displaySub = this.displaySub.bind(this)
         this.showRename = this.showRename.bind(this)
         this.rename_task = this.rename_task.bind(this)
+        this.update_status = this.update_status.bind(this)
+        this.bg_color = this.bg_color.bind(this)
+        this.text_color = this.text_color.bind(this)
+        this.delete_task = this.delete_task.bind(this);
+        this.details_get = this.details_get.bind(this);
+        this.del_refresh = this.del_refresh.bind(this)
+
     }
-    async componentDidMount() {
+    async details_get(){
         let res = await getTaskDetails(this.props.teamNumber, this.props.taskID);
-        this.setState({ taskName: res.taskName, parent_task: res.parent_task, children: res.children })
-    }
-    showAdd() {
-        this.setState((prev)=>({show_add : !prev.show_add}))
+        this.setState({ taskName: res.taskName, parent_task: res.parent_task, children: res.children, status: res.taskStatus })
     }
 
-    showRename(){
-        this.setState((prev)=>({show_rename : !prev.show_rename}))
+    async componentDidMount() {
+        await this.details_get();
+    }
+    showAdd() {
+        this.setState((prev) => ({ show_add: !prev.show_add }))
+    }
+
+    showRename() {
+        this.setState((prev) => ({ show_rename: !prev.show_rename }))
     }
 
     displaySub() {
-        this.setState((prev)=>({display_sub: !prev.display_sub}))
+        this.setState((prev) => ({ display_sub: !prev.display_sub }))
+    }
+
+    async update_status(st) {
+        let r = updateStatus(st, this.props.teamNumber, this.props.taskID);
+        if (r) this.setState({ status: st })
     }
 
     async create_sub_task() {
         var data = this.subtask_ref.value;
         let r = await createSubTask(data, this.props.teamNumber, this.props.taskID);
-        if (r) window.location.reload();
+        if (r) {
+            await this.details_get();
+            this.showAdd()
+        }
     }
 
     generate_Sub_Task(data) {
         return (
-            <SubTask teamNumber={this.props.teamNumber} taskID={data} pad={this.props.pad + 20} key={data} />
+            <SubTask teamNumber={this.props.teamNumber} taskID={data} pad={this.props.pad + 40} key={data} del_refresh={this.del_refresh}/>
         );
     }
 
-    async rename_task(){
+    async delete_task() {
+        let r = await deleteTask_sub(this.props.teamNumber, this.props.taskID);
+        if (r) this.props.del_refresh();
+    }
+    async rename_task() {
         var data = this.rename_ref.value;
-        let r = await renameTask(data,this.props.teamNumber,this.props.taskID);
+        let r = await renameTask(data, this.props.teamNumber, this.props.taskID);
         console.log(r);
-        if(r) this.setState({taskName:data});
+        if (r) this.setState({ taskName: data });
+    }
+
+    async del_refresh(){
+        await this.details_get();
+    }
+
+    bg_color() {
+        console.log(this.state.status)
+        switch (this.state.status) {
+            case 1:
+                return "danger"
+            case 2:
+                return "warning"
+            case 3:
+                return "success"
+            default:
+                return "dark"
+        }
+    }
+
+    text_color() {
+        switch (this.state.status) {
+            case 1:
+                return "light"
+            case 2:
+                return "dark"
+            case 3:
+                return "light"
+            default:
+                return "light"
+        }
     }
 
 
     render() {
         return (
             <div>
-                <Card style={{ marginBottom: '20px', marginLeft: this.props.pad}}>
+                <Card bg={this.bg_color()} text={this.text_color()} style={{ marginBottom: '40px', marginLeft: this.props.pad }}>
                     <Card.Body>
                         <Card.Title>
                             {this.state.taskName}
                         </Card.Title>
-                        <Button variant="success" onClick={this.showAdd}>Add Subtask</Button>
-                        <Button onClick={this.showRename} style={{marginLeft:'20px'}}>Rename</Button>
-                        <Button variant="danger" style={{ margin: '20px' }}>Delete Subtask</Button>
-                        <Button onClick={this.displaySub} style={{display: this.state.children.length == 0? "none":"inline"}}>Show subtasks</Button>
+                        <ButtonGroup className="mb-2" style={{ display: "block" }}>
+                            <Button variant="dark" onClick={this.showAdd}>Add Subtask</Button>
+                            <Button variant="dark" onClick={this.showRename}>Rename</Button>
+                            <Button variant="dark" onClick={this.displaySub} style={{ display: this.state.children.length == 0 ? "none" : "inline" }}>Show subtasks</Button>
+                            <Button variant="danger" onClick={this.delete_task}>Delete Task</Button>
+                        </ButtonGroup>
+                        <ButtonGroup className="mb-2" style={{ display: "block" }}>
+                            <Button variant="danger" onClick={() => this.update_status(1)}>Pending</Button>
+                            <Button variant="warning" onClick={() => this.update_status(2)}>In Progress</Button>
+                            <Button variant="success" onClick={() => this.update_status(3)}>Done</Button>
+                        </ButtonGroup>
                     </Card.Body>
                     <Card.Footer style={{ display: this.state.show_add ? "block" : "none" }}>
                         <InputGroup>
@@ -83,23 +145,24 @@ class SubTask extends React.Component {
                         </InputGroup>
                         <Button variant="success" style={{ marginLeft: '20px' }} onClick={this.create_sub_task}>Add</Button>
                     </Card.Footer>
-                    <Card.Footer style={{display: this.state.show_rename?"block":"none"}}>
+                    <Card.Footer style={{ display: this.state.show_rename ? "block" : "none" }}>
                         <InputGroup>
-                        <FormControl
-                            style={{margin:'20px'}}
-                            type="text"
-                            placeholder="New name"
-                            ref = {(el) => {this.rename_ref = el}}
-                        >
-                        </FormControl>
+                            <FormControl
+                                style={{ margin: '20px' }}
+                                type="text"
+                                placeholder="New name"
+                                ref={(el) => { this.rename_ref = el }}
+                            >
+                            </FormControl>
                         </InputGroup>
-                        <Button variant="success" style={{marginLeft:'20px'}} onClick={this.rename_task}>Rename</Button> 
+                        <Button variant="success" style={{ marginLeft: '20px' }} onClick={this.rename_task}>Rename</Button>
                     </Card.Footer>
                 </Card>
                 <div style={{ display: this.state.display_sub ? "block" : "none" }}>
                     {this.state.children.map(data => this.generate_Sub_Task(data))}
-                </div>            
+                    <hr></hr>
                 </div>
+            </div>
         );
     }
 }

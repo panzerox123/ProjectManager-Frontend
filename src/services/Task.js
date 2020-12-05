@@ -56,10 +56,25 @@ async function getTaskDetails(teamNumber, taskID) {
     } else return 0;
 }
 
-async function deleteTask(teamNumber, taskID) {
+async function deleteTask_main(teamNumber, taskID) {
     let token = localStorage.getItem('x-access-token')
     if (!token) return 0;
-    let res = await fetch(`${URL}/api/tasks/${teamNumber}/${taskID}/delete`, {
+    let res = await fetch(`${URL}/api/tasks/${teamNumber}/${taskID}/delete_main_task`, {
+        method: 'DELETE',
+        headers: {
+            'Content-Type': "application/json",
+            'x-access-token': token
+        }
+    });
+    console.log(res.status)
+    if (res.status == 200) return 1 
+    else return 0;
+}
+
+async function deleteTask_sub(teamNumber, taskID) {
+    let token = localStorage.getItem('x-access-token')
+    if (!token) return 0;
+    let res = await fetch(`${URL}/api/tasks/${teamNumber}/${taskID}/delete_sub_task`, {
         method: 'DELETE',
         headers: {
             'Content-Type': "application/json",
@@ -89,8 +104,23 @@ async function renameTask(data,teamNumber,taskID){
     else return 0
 }
 
+async function updateStatus(data,teamNumber,taskID){
+    let token = localStorage.getItem('x-access-token')
+    if (!token) return 0;
+    let res = await fetch(`${URL}/api/tasks/${teamNumber}/${taskID}/${data}`,{
+        method: 'PUT',
+        headers: {
+            'x-access-token': token
+        },
+    });
+    if(res.status==200) return 1
+    else return 0
+}
+
 exports.createMainTask = createMainTask;
 exports.getTaskDetails = getTaskDetails;
 exports.createSubTask = createSubTask;
-exports.deleteTask = deleteTask;
+exports.deleteTask_main = deleteTask_main;
+exports.deleteTask_sub = deleteTask_sub;
 exports.renameTask = renameTask;
+exports.updateStatus = updateStatus;

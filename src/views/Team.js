@@ -17,19 +17,28 @@ class Team extends React.Component {
         }
         this.maintask_ref = null;
         this.create_maintask = this.create_maintask.bind(this);
+        this.get_details = this.get_details.bind(this)
+        this.del_refresh = this.del_refresh.bind(this);
+    }
+
+    async get_details(){
+        let res = await teamData(this.props.match.params.teamNumber);
+        this.setState({ teamName: res.teamName, teamNumber: res.teamNumber ,tasks: res.tasks})
     }
     
     async componentDidMount() {
-        let res = await teamData(this.props.match.params.teamNumber);
-        this.setState({ teamName: res.teamName, teamNumber: res.teamNumber ,tasks: res.tasks})
-        console.log(this.state.tasks)
+        await this.get_details();
     }
 
     async create_maintask(){
         let data = this.maintask_ref.value;
         //console.log(data);
         let r = await createMainTask(data, this.props.match.params.teamNumber);
-        if(r) window.location.reload();
+        if(r) this.get_details();
+    }
+
+    async del_refresh(){
+        await this.get_details();
     }
 
     render() {
@@ -50,7 +59,7 @@ class Team extends React.Component {
                     </InputGroup>
                     <Button variant="success" onClick={this.create_maintask}>Create a new Task</Button>
                 </Jumbotron>
-                {this.state.tasks.map(data=><Task teamNumber={this.state.teamNumber} taskID={data} key={data}></Task>)}
+                {this.state.tasks.map(data=><Task teamNumber={this.state.teamNumber} taskID={data} key={data} del_refresh={this.del_refresh}></Task>)}
             </Container>
         );
     }
