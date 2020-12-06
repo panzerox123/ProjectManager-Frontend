@@ -3,6 +3,7 @@ const fetch = require('node-fetch')
 URL = 'http://localhost:8000'
 
 async function createMainTask(data, teamNumber) {
+    if(data=="") return 0;
     let token = localStorage.getItem('x-access-token')
     if (!token) return 0;
     var body = {
@@ -22,6 +23,7 @@ async function createMainTask(data, teamNumber) {
 }
 
 async function createSubTask(data, teamNumber, taskID) {
+    if(data=="") return 0;
     let token = localStorage.getItem('x-access-token')
     if (!token) return 0;
     var body = {
@@ -117,10 +119,10 @@ async function updateStatus(data,teamNumber,taskID){
     else return 0
 }
 
-exports.createMainTask = createMainTask;
-exports.getTaskDetails = getTaskDetails;
-exports.createSubTask = createSubTask;
-exports.deleteTask_main = deleteTask_main;
-exports.deleteTask_sub = deleteTask_sub;
-exports.renameTask = renameTask;
-exports.updateStatus = updateStatus;
+export {createMainTask}
+export {getTaskDetails} ;
+export {createSubTask};
+export {deleteTask_main};
+export {deleteTask_sub};
+export {renameTask};
+export {updateStatus};

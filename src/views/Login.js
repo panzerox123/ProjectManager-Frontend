@@ -5,6 +5,8 @@ import FormControl from 'react-bootstrap/FormControl';
 import InputGroup from 'react-bootstrap/InputGroup';
 import Jumbotron from 'react-bootstrap/Jumbotron';
 
+import '../style.css'
+
 const {login} = require('../services/Auth');
 
 class Login extends React.Component {
@@ -36,7 +38,7 @@ class Login extends React.Component {
         return (
             <Container>
                 <Jumbotron>
-                    <h1>Login</h1>
+                    <h1 style={{fontFamily: "\'Anton\',sans-serif"}}>Login</h1>
                     <h3>Enter your login details</h3>
                 </Jumbotron>
                 <InputGroup className="mb-3">

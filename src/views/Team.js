@@ -5,6 +5,8 @@ import { teamData } from '../services/Teams';
 import InputGroup from 'react-bootstrap/InputGroup';
 import FormControl from 'react-bootstrap/FormControl';
 
+import '../style.css'
+
 import {createMainTask} from '../services/Task'
 
 class Team extends React.Component {
@@ -45,8 +47,8 @@ class Team extends React.Component {
         //return (<h1>Hello {this.props.match.params.teamNumber}</h1>);
         return (
             <Container>
-                <Jumbotron>
-                    <h3>{this.state.teamName}</h3>
+                <Jumbotron className="text-center">
+                    <h3 style={{fontFamily: "\'Anton\',sans-serif"}}>{this.state.teamName}</h3>
                     <h5>{this.state.teamNumber}</h5>
                     <br></br>
                     <InputGroup className="mb-3">

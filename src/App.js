@@ -1,4 +1,6 @@
 import './App.css';
+import './style.css';
+
 import React, { useCallback } from "react";
 import { BrowserRouter as Router, Route } from 'react-router-dom';
 import 'bootstrap/dist/css/bootstrap.min.css';
@@ -21,6 +23,7 @@ const { auth, login } = require('./services/Auth')
 const {createTeam, joinTeam_1} = require('./services/Teams')
 var new_team_ref;
 var join_team_ref;
+
 
 async function createNewTeam(){
   //console.log(new_team_ref.value);
@@ -98,13 +101,12 @@ class App extends React.Component {
   authentication() {
     return (
       <Router>
-        <Navbar bg="dark" variant="dark">
-          <Navbar.Brand>Project Manager</Navbar.Brand>
-          <Navbar.Toggle aria-controls="basic-navbar-nav" />
-          <Navbar.Collapse id="basic-navbar-nav">
+        <Navbar bg="light" variant="light">
+          <Navbar.Brand style={{fontFamily: "\'Pacifico\', cursive"}}>Project Manager</Navbar.Brand>
+          <Nav className="mr-auto">
             <Nav.Link href="/">Login</Nav.Link>
             <Nav.Link href="/register">Signup</Nav.Link>
-          </Navbar.Collapse>
+          </Nav>
         </Navbar>
         <Route path="/" exact render={(props) => <Login login_func={this.log_in} {...props} />} />
         <Route path="/register" exact render={(props) => <Register login_func={this.log_in} {...props} />} />
@@ -115,14 +117,13 @@ class App extends React.Component {
   home() {
     return (
       <Router>
-        <Navbar bg="dark" variant="dark">
-          <Navbar.Brand>Project Manager</Navbar.Brand>
-          <Navbar.Toggle aria-controls="basic-navbar-nav" />
-          <Navbar.Collapse id="basic-navbar-nav">
+        <Navbar bg="light" variant="light">
+          <Navbar.Brand style={{fontFamily: "\'Pacifico\', cursive"}} href="/">Project Manager</Navbar.Brand>
+          <Nav className="mr-auto">
             <Nav.Link href="/new_team">New Team</Nav.Link>
             <Nav.Link href="/join_team">Join Team</Nav.Link>
-            <Nav.Link onClick={this.log_out}>{this.state.data.email}</Nav.Link>
-          </Navbar.Collapse>
+            <Nav.Link onClick={this.log_out} style={{color:"red"}}>{this.state.data.email}(Click to Logout)</Nav.Link>
+          </Nav>
         </Navbar>
         <Route path='/' exact component={Home} />
         <Route path='/new_team' exact render={this.newTeam_render} />

@@ -73,12 +73,12 @@ class Task extends React.Component {
     async rename_task() {
         var data = this.rename_ref.value;
         let r = await renameTask(data, this.props.teamNumber, this.props.taskID);
-        if (r) await this.details_get();
+        if (r) {await this.details_get();this.showRename()};
     }
 
     async delete_task() {
         let r = await deleteTask_main(this.props.teamNumber, this.props.taskID);
-        console.log(r)
+        //console.log(r)
         if (r) await this.props.del_refresh();
     }
 
@@ -95,7 +95,7 @@ class Task extends React.Component {
             case 3:
                 return "success"
             default:
-                return "dark"
+                return "light"
         }
     }
 
@@ -108,7 +108,7 @@ class Task extends React.Component {
             case 3:
                 return "light"
             default:
-                return "light"
+                return "dark"
         }
     }
 
@@ -117,16 +117,16 @@ class Task extends React.Component {
             <div>
                 <Card bg={this.bg_color()} text={this.text_color()} style={{ marginBottom: '20px' }}>
                     <Card.Body>
-                        <Card.Title>
+                        <Card.Title style={{fontFamily: "\'Castoro\', serif"}}>
                             {this.state.taskName}
                         </Card.Title>
-                        <ButtonGroup className="mb-2" style={{display: "block"}}>
+                        <ButtonGroup className="mb-2" style={{display: "block", fontFamily: "\'Roboto Mono\', monospace"}}>
                             <Button variant="dark" onClick={this.showAdd}>Add Subtask</Button>
                             <Button variant="dark" onClick={this.showRename}>Rename</Button>
                             <Button variant="dark" onClick={this.displaySub} style={{ display: this.state.children.length == 0 ? "none" : "inline" }}>Show subtasks</Button>
                             <Button variant="danger" onClick={this.delete_task}>Delete Task</Button>
                         </ButtonGroup>
-                        <ButtonGroup className="mb-2" style={{display: "block"}}>
+                        <ButtonGroup className="mb-2" style={{display: "block", fontFamily: "\'Roboto Mono\', monospace"}}>
                             <Button variant="danger" onClick={() => this.update_status(1)}>Pending</Button>
                             <Button variant="warning" onClick={() => this.update_status(2)}>In Progress</Button>
                             <Button variant="success" onClick={() => this.update_status(3)}>Done</Button>

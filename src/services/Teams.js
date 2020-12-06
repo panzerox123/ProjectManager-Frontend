@@ -15,6 +15,7 @@ async function getTeams(){
 }
 
 async function createTeam(data){
+    if(data=="") return 0;
     let token = localStorage.getItem('x-access-token');
     var body = {
         teamName: data
@@ -34,6 +35,7 @@ async function createTeam(data){
 }
 
 async function joinTeam_1(data){
+    if(data==0) return 0;
     let token = localStorage.getItem('x-access-token');
     var body = {
         teamNumber: data
@@ -68,7 +70,7 @@ async function teamData(teamNumber){
     }
 }
 
-exports.getTeams = getTeams;
-exports.createTeam = createTeam;
-exports.joinTeam_1 = joinTeam_1;
-exports.teamData = teamData;
+export {getTeams};
+export {createTeam};
+export {joinTeam_1};
+export {teamData};

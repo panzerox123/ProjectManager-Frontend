@@ -6,6 +6,8 @@ import Button from 'react-bootstrap/Button'
 import { Route, Switch } from 'react-router-dom'
 import FormControl from 'react'
 
+import '../style.css'
+
 const { getTeams } = require('../services/Teams')
 
 class Home extends React.Component {
@@ -18,12 +20,12 @@ class Home extends React.Component {
 
     generateList(data) {
         return (
-            <Card className="text-center" key={data.teamNumber}>
+            <Card className="text-center" key={data.teamNumber} style={{margin: "20px"}} bg="light" text="datk">
                 <Card.Body>
-                <Card.Title><b>{data.teamName}</b></Card.Title>
+                <Card.Title style={{fontFamily: "\'Castoro\',serif"}}><b>{data.teamName}</b></Card.Title>
                 <Button variant="success" href={`/team/${data.teamNumber}`}>Open</Button>
                 </Card.Body>
-                <Card.Footer><b>Invite Code</b><br></br>{data.teamNumber}</Card.Footer>
+                <Card.Footer><b style={{fontFamily: "\'Anton\',sans-serif"}}>Invite Code</b><br></br>{data.teamNumber}</Card.Footer>
             </Card>
         );
     }
@@ -36,8 +38,8 @@ class Home extends React.Component {
     render() {
         return (
             <Container>
-                <Jumbotron>
-                    <h1>Your teams</h1>
+                <Jumbotron className="text-center">
+                    <h1 style={{fontFamily: "\'Anton\',sans-serif"}}>Your teams</h1>
                 </Jumbotron>
                 {this.state.teams.map(data=>this.generateList(data))}
             </Container>

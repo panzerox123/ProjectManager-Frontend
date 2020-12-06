@@ -5,6 +5,9 @@ import FormControl from 'react-bootstrap/FormControl';
 import InputGroup from 'react-bootstrap/InputGroup';
 import Jumbotron from 'react-bootstrap/Jumbotron';
 
+import '../style.css'
+
+
 const {register} = require('../services/Auth');
 
 class Register extends React.Component {
@@ -36,14 +39,14 @@ class Register extends React.Component {
     submitHandler(){
         //console.log(this.state.email,this.state.password);
         let r = register(this.state);
-        if(r) this.props.login_func();
+        if(r) window.location.href='/';
     }
 
     render() {
         return (
             <Container>
                 <Jumbotron>
-                    <h1>Register</h1>
+                    <h1 style={{fontFamily: "\'Anton\',sans-serif"}}>Register</h1>
                     <h3>Enter your details</h3>
                 </Jumbotron>
                 <InputGroup className="mb-3">
